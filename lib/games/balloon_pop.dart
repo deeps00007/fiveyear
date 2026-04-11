@@ -1,4 +1,10 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+
+class BalloonState {
+  final Color color;
+  final bool isPopped;
+  BalloonState({required this.color, required this.isPopped});
+}
 
 class BalloonPopGame extends StatefulWidget {
   const BalloonPopGame({super.key});
@@ -18,20 +24,21 @@ class _BalloonPopGameState extends State<BalloonPopGame>
   void initState() {
     super.initState();
     _celebrationController = AnimationController(
-      duration: const Duration(milliseconds: 800),
-      vsync: this,
-    );
+        duration: const Duration(milliseconds: 600), vsync: this);
     _resetGame();
   }
 
   void _resetGame() {
     balloons = [
-      BalloonState(color: Colors.red, isPopped: false),
-      BalloonState(color: Colors.yellow, isPopped: false),
-      BalloonState(color: Colors.blue, isPopped: false),
-    ];
+      BalloonState(color: const Color(0xFFE53935), isPopped: false),
+      BalloonState(color: const Color(0xFFFFB300), isPopped: false),
+      BalloonState(color: const Color(0xFF1E88E5), isPopped: false),
+      BalloonState(color: const Color(0xFF43A047), isPopped: false),
+      BalloonState(color: const Color(0xFF8E24AA), isPopped: false),
+    ]..shuffle();
     poppedCount = 0;
     gameComplete = false;
+    _celebrationController.reset();
   }
 
   void _popBalloon(int index) {
@@ -46,21 +53,8 @@ class _BalloonPopGameState extends State<BalloonPopGame>
 
       if (poppedCount == balloons.length) {
         gameComplete = true;
-        _celebrationController.forward().then((_) {
-          Future.delayed(const Duration(seconds: 2), () {
-            if (mounted) {
-              _playAgain();
-            }
-          });
-        });
+        _celebrationController.forward();
       }
-    });
-  }
-
-  void _playAgain() {
-    setState(() {
-      _resetGame();
-      _celebrationController.reset();
     });
   }
 
@@ -73,162 +67,140 @@ class _BalloonPopGameState extends State<BalloonPopGame>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFE5CC),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => Navigator.of(context).pop(),
-        child: const Icon(Icons.arrow_back),
-      ),
-      body: SafeArea(
-        child: Stack(
-          children: [
-            Center(
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Padding(
-                  padding: const EdgeInsets.all(24.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        'POP!',
-                        style: TextStyle(
-                          fontSize: 64,
-                          fontWeight: FontWeight.w900,
-                          color: Color(0xFFFF6B35),
-                        ),
-                      ),
-                      const SizedBox(height: 48),
-                      Wrap(
-                        spacing: 32,
-                        runSpacing: 32,
-                        alignment: WrapAlignment.center,
-                        children: List.generate(
-                          balloons.length,
-                          (index) => GestureDetector(
-                            onTap: () => _popBalloon(index),
-                            child: _BalloonWidget(state: balloons[index]),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 48),
-                      Text(
-                        '$poppedCount/${balloons.length}',
-                        style: const TextStyle(
-                          fontSize: 48,
-                          fontWeight: FontWeight.w900,
-                          color: Color(0xFFFF6B35),
-                        ),
-                      ),
-                    ],
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFFB3E5FC), Color(0xFF29B6F6)],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: SafeArea(
+          child: Stack(
+            children: [
+              Positioned(
+                top: 16, left: 16,
+                child: GestureDetector(
+                  onTap: () => Navigator.of(context).pop(),
+                  child: Container(
+                    width: 50, height: 50,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFFCA28),
+                      borderRadius: BorderRadius.circular(15),
+                      border: Border.all(color: Colors.white, width: 3),
+                      boxShadow: const [BoxShadow(color: Color(0xFFF57F17), offset: Offset(0, 4))],
+                    ),
+                    child: const Icon(Icons.arrow_back_rounded, color: Colors.white, size: 32),
                   ),
                 ),
               ),
-            ),
-            if (gameComplete)
               Center(
-                child: ScaleTransition(
-                  scale: Tween<double>(begin: 0.0, end: 1.0).animate(
-                    CurvedAnimation(
-                      parent: _celebrationController,
-                      curve: Curves.elasticOut,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Stack(
+                      children: [
+                        Text('POP THEM ALL!', style: TextStyle(fontSize: 40, fontWeight: FontWeight.w900, foreground: Paint()..style=PaintingStyle.stroke..strokeWidth=8..color=const Color(0xFF0277BD))),
+                        const Text('POP THEM ALL!', style: TextStyle(fontSize: 40, fontWeight: FontWeight.w900, color: Colors.white)),
+                      ],
+                    ),
+                    const SizedBox(height: 60),
+                    Wrap(
+                      spacing: 20, runSpacing: 30,
+                      alignment: WrapAlignment.center,
+                      children: List.generate(balloons.length, (index) {
+                        return GestureDetector(
+                          onTap: () => _popBalloon(index),
+                          child: AnimatedOpacity(
+                            duration: const Duration(milliseconds: 150),
+                            opacity: balloons[index].isPopped ? 0.0 : 1.0,
+                            child: AnimatedScale(
+                              duration: const Duration(milliseconds: 150),
+                              scale: balloons[index].isPopped ? 1.5 : 1.0,
+                              child: Container(
+                                width: 90, height: 110,
+                                decoration: BoxDecoration(
+                                  color: balloons[index].color,
+                                  borderRadius: const BorderRadius.only(
+                                    topLeft: Radius.circular(45), topRight: Radius.circular(45),
+                                    bottomLeft: Radius.circular(40), bottomRight: Radius.circular(40),
+                                  ),
+                                  border: Border.all(color: Colors.white.withAlpha(150), width: 3),
+                                  boxShadow: const [BoxShadow(color: Colors.black26, offset: Offset(0, 8), blurRadius: 5)],
+                                ),
+                                child: Align(
+                                  alignment: const Alignment(0.5, -0.6),
+                                  child: Container(
+                                    width: 15, height: 25,
+                                    decoration: BoxDecoration(color: Colors.white.withAlpha(150), borderRadius: BorderRadius.circular(10)),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      }),
+                    ),
+                  ],
+                ),
+              ),
+
+              if (gameComplete)
+                Container(
+                  color: Colors.black.withAlpha(100),
+                  child: Center(
+                    child: ScaleTransition(
+                      scale: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(parent: _celebrationController, curve: Curves.elasticOut)),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 30),
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(colors: [Color(0xFF64DD17), Color(0xFF2E7D32)], begin: Alignment.topCenter, end: Alignment.bottomCenter),
+                          borderRadius: BorderRadius.circular(40), border: Border.all(color: Colors.white, width: 8),
+                          boxShadow: [const BoxShadow(color: Color(0xFF1B5E20), offset: Offset(0, 8)), BoxShadow(color: Colors.black.withAlpha(100), blurRadius: 20, offset: const Offset(0, 15))]
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Stack(
+                              children: [
+                                Text(\'YOU WIN!\', style: TextStyle(fontSize: 56, fontWeight: FontWeight.w900, foreground: Paint()..style = PaintingStyle.stroke..strokeWidth = 10..color = const Color(0xFFF57F17))),
+                                const Text(\'YOU WIN!\', style: TextStyle(fontSize: 56, fontWeight: FontWeight.w900, color: Color(0xFFFFCA28))),
+                              ],
+                            ),
+                            const SizedBox(height: 20),
+                            Row(mainAxisSize: MainAxisSize.min, children: const [Icon(Icons.star_rounded, color: Color(0xFFFFCA28), size: 64), Icon(Icons.star_rounded, color: Color(0xFFFFCA28), size: 80), Icon(Icons.star_rounded, color: Color(0xFFFFCA28), size: 64)]),
+                            const SizedBox(height: 30),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    if (mounted) setState(() { _resetGame(); });
+                                  },
+                                  child: Container(width: 60, height: 60, decoration: BoxDecoration(color: const Color(0xFFFFCA28), shape: BoxShape.circle, border: Border.all(color: Colors.white, width: 4), boxShadow: const [BoxShadow(color: Color(0xFFF57F17), offset: Offset(0, 4))]), child: const Icon(Icons.replay_rounded, color: Colors.white, size: 36)),
+                                ),
+                                const SizedBox(width: 20),
+                                GestureDetector(
+                                  onTap: () => Navigator.of(context).pop(),
+                                  child: Container(width: 60, height: 60, decoration: BoxDecoration(color: const Color(0xFF4DD0E1), shape: BoxShape.circle, border: Border.all(color: Colors.white, width: 4), boxShadow: const [BoxShadow(color: Color(0xFF00838F), offset: Offset(0, 4))]), child: const Icon(Icons.home_rounded, color: Colors.white, size: 36)),
+                                ),
+                                const SizedBox(width: 20),
+                                GestureDetector(
+                                  onTap: () {
+                                    if (mounted) setState(() { _resetGame(); });
+                                  },
+                                  child: Container(width: 60, height: 60, decoration: BoxDecoration(color: const Color(0xFFFF7043), shape: BoxShape.circle, border: Border.all(color: Colors.white, width: 4), boxShadow: const [BoxShadow(color: Color(0xFFD84315), offset: Offset(0, 4))]), child: const Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 36)),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(
-                        Icons.celebration,
-                        size: 120,
-                        color: Color(0xFFFFD700),
-                      ),
-                      const SizedBox(height: 32),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF4CAF50),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 48,
-                            vertical: 28,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(48),
-                          ),
-                          elevation: 12,
-                        ),
-                        onPressed: _playAgain,
-                        child: const Text(
-                          'PLAY AGAIN',
-                          style: TextStyle(
-                            fontSize: 36,
-                            fontWeight: FontWeight.w900,
-                            color: Colors.white,
-                            letterSpacing: 1.5,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
                 ),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-}
 
-class BalloonState {
-  final Color color;
-  final bool isPopped;
-
-  BalloonState({required this.color, required this.isPopped});
-}
-
-class _BalloonWidget extends StatelessWidget {
-  final BalloonState state;
-
-  const _BalloonWidget({required this.state});
-
-  @override
-  Widget build(BuildContext context) {
-    if (state.isPopped) {
-      return Container(
-        width: 140,
-        height: 200,
-        decoration: const BoxDecoration(color: Colors.transparent),
-      );
-    }
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      width: 140,
-      height: 200,
-      decoration: BoxDecoration(
-        color: state.color,
-        shape: BoxShape.circle,
-        boxShadow: [
-          BoxShadow(
-            color: state.color.withAlpha((0.4 * 255).toInt()),
-            blurRadius: 20,
-            spreadRadius: 8,
-          ),
-        ],
-      ),
-      child: Align(
-        alignment: Alignment.bottomCenter,
-        child: Padding(
-          padding: const EdgeInsets.only(bottom: 16),
-          child: Container(
-            width: 16,
-            height: 32,
-            decoration: BoxDecoration(
-              color: Colors.brown[300],
-              borderRadius: BorderRadius.circular(8),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.brown.withAlpha((0.3 * 255).toInt()),
-                  blurRadius: 8,
-                ),
-              ],
-            ),
+            ],
           ),
         ),
       ),

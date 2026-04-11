@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
 class PuzzleGame extends StatefulWidget {
   const PuzzleGame({super.key});
@@ -16,7 +16,7 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     _celebrationController = AnimationController(
-      duration: const Duration(milliseconds: 800),
+      duration: const Duration(milliseconds: 600),
       vsync: this,
     );
   }
@@ -37,17 +37,7 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
 
   void _checkWin() {
     if (leftPlaced && rightPlaced) {
-      _celebrationController.forward().then((_) {
-        Future.delayed(const Duration(seconds: 2), () {
-          if (mounted) {
-            setState(() {
-              leftPlaced = false;
-              rightPlaced = false;
-              _celebrationController.reset();
-            });
-          }
-        });
-      });
+      _celebrationController.forward();
     }
   }
 
@@ -57,178 +47,168 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF7F2FF),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => Navigator.of(context).pop(),
-        child: const Icon(Icons.arrow_back),
+  Widget _buildPiece(Color color, String text) {
+    return Container(
+      width: 100, height: 150,
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.white, width: 4),
+        boxShadow: const [BoxShadow(color: Colors.black26, offset: Offset(0, 5), blurRadius: 5)],
       ),
-      body: SafeArea(
-        child: Stack(
-          children: [
-            Center(
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Padding(
-                  padding: const EdgeInsets.all(24.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        'FIX THE STAR',
-                        style: TextStyle(
-                          fontSize: 32,
-                          fontWeight: FontWeight.w900,
-                          color: Color(0xFF4A2E87),
-                        ),
-                      ),
-                      const SizedBox(height: 48),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          DragTarget<String>(
-                            onWillAcceptWithDetails: (data) =>
-                                data.data == 'left',
-                            onAcceptWithDetails: (data) => _onLeftAccept(),
-                            builder: (context, candidateData, rejectedData) {
-                              return Container(
-                                width: 120,
-                                height: 240,
-                                decoration: BoxDecoration(
-                                  color: leftPlaced
-                                      ? Colors.transparent
-                                      : Colors.black12,
-                                  borderRadius: const BorderRadius.only(
-                                    topLeft: Radius.circular(120),
-                                    bottomLeft: Radius.circular(120),
-                                  ),
-                                ),
-                                child: leftPlaced
-                                    ? _HalfStar(isLeft: true)
-                                    : null,
-                              );
-                            },
-                          ),
-                          const SizedBox(width: 4),
-                          DragTarget<String>(
-                            onWillAcceptWithDetails: (data) =>
-                                data.data == 'right',
-                            onAcceptWithDetails: (data) => _onRightAccept(),
-                            builder: (context, candidateData, rejectedData) {
-                              return Container(
-                                width: 120,
-                                height: 240,
-                                decoration: BoxDecoration(
-                                  color: rightPlaced
-                                      ? Colors.transparent
-                                      : Colors.black12,
-                                  borderRadius: const BorderRadius.only(
-                                    topRight: Radius.circular(120),
-                                    bottomRight: Radius.circular(120),
-                                  ),
-                                ),
-                                child: rightPlaced
-                                    ? _HalfStar(isLeft: false)
-                                    : null,
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 64),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          if (!rightPlaced)
-                            Draggable<String>(
-                              data: 'right',
-                              feedback: Material(
-                                color: Colors.transparent,
-                                child: _HalfStar(isLeft: false),
-                              ),
-                              childWhenDragging: const SizedBox(
-                                width: 120,
-                                height: 240,
-                              ),
-                              child: _HalfStar(isLeft: false),
-                            )
-                          else
-                            const SizedBox(width: 120, height: 240),
-                          if (!leftPlaced)
-                            Draggable<String>(
-                              data: 'left',
-                              feedback: Material(
-                                color: Colors.transparent,
-                                child: _HalfStar(isLeft: true),
-                              ),
-                              childWhenDragging: const SizedBox(
-                                width: 120,
-                                height: 240,
-                              ),
-                              child: _HalfStar(isLeft: true),
-                            )
-                          else
-                            const SizedBox(width: 120, height: 240),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            if (leftPlaced && rightPlaced)
-              Center(
-                child: ScaleTransition(
-                  scale: Tween<double>(begin: 0.0, end: 1.0).animate(
-                    CurvedAnimation(
-                      parent: _celebrationController,
-                      curve: Curves.elasticOut,
-                    ),
-                  ),
-                  child: const Icon(
-                    Icons.auto_awesome,
-                    size: 200,
-                    color: Color(0xFFFFD700),
-                  ),
-                ),
-              ),
-          ],
-        ),
+      child: Center(
+        child: Text(text, style: const TextStyle(fontSize: 40, fontWeight: FontWeight.w900, color: Colors.white)),
       ),
     );
   }
-}
-
-class _HalfStar extends StatelessWidget {
-  final bool isLeft;
-  const _HalfStar({required this.isLeft});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 120,
-      height: 240,
-      clipBehavior: Clip.hardEdge,
-      decoration: BoxDecoration(
-        color: Colors.amber,
-        borderRadius: isLeft
-            ? const BorderRadius.only(
-                topLeft: Radius.circular(120),
-                bottomLeft: Radius.circular(120),
-              )
-            : const BorderRadius.only(
-                topRight: Radius.circular(120),
-                bottomRight: Radius.circular(120),
+    return Scaffold(
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFFFFCC80), Color(0xFFFF5252)],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: SafeArea(
+          child: Stack(
+            children: [
+              Positioned(
+                top: 16, left: 16,
+                child: GestureDetector(
+                  onTap: () => Navigator.of(context).pop(),
+                  child: Container(
+                    width: 50, height: 50,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFFCA28),
+                      borderRadius: BorderRadius.circular(15),
+                      border: Border.all(color: Colors.white, width: 3),
+                      boxShadow: const [BoxShadow(color: Color(0xFFF57F17), offset: Offset(0, 4))],
+                    ),
+                    child: const Icon(Icons.arrow_back_rounded, color: Colors.white, size: 32),
+                  ),
+                ),
               ),
-      ),
-      child: Center(
-        child: Icon(
-          isLeft ? Icons.star_half : Icons.star_half,
-          size: 80,
-          color: Colors.white,
-        ), // Close enough visual representation for a simple app
+              Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Stack(
+                      children: [
+                        Text('SOLVE THE PUZZLE!', style: TextStyle(fontSize: 40, fontWeight: FontWeight.w900, foreground: Paint()..style=PaintingStyle.stroke..strokeWidth=8..color=const Color(0xFFD50000))),
+                        const Text('SOLVE THE PUZZLE!', style: TextStyle(fontSize: 40, fontWeight: FontWeight.w900, color: Colors.white)),
+                      ],
+                    ),
+                    const SizedBox(height: 60),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        DragTarget<String>(
+                          builder: (context, candidateData, rejectedData) {
+                            return leftPlaced
+                                ? _buildPiece(const Color(0xFF4CAF50), '1')
+                                : Container(width: 100, height: 150, decoration: BoxDecoration(color: Colors.black12, borderRadius: BorderRadius.circular(20), border: Border.all(color: Colors.white30, width: 4, style: BorderStyle.solid)));
+                          },
+                          onWillAcceptWithDetails: (data) => data.data == 'left',
+                          onAcceptWithDetails: (_) => _onLeftAccept(),
+                        ),
+                        const SizedBox(width: 10),
+                        DragTarget<String>(
+                          builder: (context, candidateData, rejectedData) {
+                            return rightPlaced
+                                ? _buildPiece(const Color(0xFF2196F3), '2')
+                                : Container(width: 100, height: 150, decoration: BoxDecoration(color: Colors.black12, borderRadius: BorderRadius.circular(20), border: Border.all(color: Colors.white30, width: 4, style: BorderStyle.solid)));
+                          },
+                          onWillAcceptWithDetails: (data) => data.data == 'right',
+                          onAcceptWithDetails: (_) => _onRightAccept(),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 80),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        if (!leftPlaced)
+                          Draggable<String>(
+                            data: 'left',
+                            feedback: _buildPiece(const Color(0xFF4CAF50), '1'),
+                            childWhenDragging: Opacity(opacity: 0.3, child: _buildPiece(const Color(0xFF4CAF50), '1')),
+                            child: _buildPiece(const Color(0xFF4CAF50), '1'),
+                          ),
+                        if (!rightPlaced)
+                          Draggable<String>(
+                            data: 'right',
+                            feedback: _buildPiece(const Color(0xFF2196F3), '2'),
+                            childWhenDragging: Opacity(opacity: 0.3, child: _buildPiece(const Color(0xFF2196F3), '2')),
+                            child: _buildPiece(const Color(0xFF2196F3), '2'),
+                          ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+
+              if (leftPlaced && rightPlaced)
+                Container(
+                  color: Colors.black.withAlpha(100),
+                  child: Center(
+                    child: ScaleTransition(
+                      scale: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(parent: _celebrationController, curve: Curves.elasticOut)),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 30),
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(colors: [Color(0xFF64DD17), Color(0xFF2E7D32)], begin: Alignment.topCenter, end: Alignment.bottomCenter),
+                          borderRadius: BorderRadius.circular(40), border: Border.all(color: Colors.white, width: 8),
+                          boxShadow: [const BoxShadow(color: Color(0xFF1B5E20), offset: Offset(0, 8)), BoxShadow(color: Colors.black.withAlpha(100), blurRadius: 20, offset: const Offset(0, 15))]
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Stack(
+                              children: [
+                                Text(\'YOU WIN!\', style: TextStyle(fontSize: 56, fontWeight: FontWeight.w900, foreground: Paint()..style = PaintingStyle.stroke..strokeWidth = 10..color = const Color(0xFFF57F17))),
+                                const Text(\'YOU WIN!\', style: TextStyle(fontSize: 56, fontWeight: FontWeight.w900, color: Color(0xFFFFCA28))),
+                              ],
+                            ),
+                            const SizedBox(height: 20),
+                            Row(mainAxisSize: MainAxisSize.min, children: const [Icon(Icons.star_rounded, color: Color(0xFFFFCA28), size: 64), Icon(Icons.star_rounded, color: Color(0xFFFFCA28), size: 80), Icon(Icons.star_rounded, color: Color(0xFFFFCA28), size: 64)]),
+                            const SizedBox(height: 30),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    if (mounted) setState(() { leftPlaced = false; rightPlaced = false; _celebrationController.reset(); });
+                                  },
+                                  child: Container(width: 60, height: 60, decoration: BoxDecoration(color: const Color(0xFFFFCA28), shape: BoxShape.circle, border: Border.all(color: Colors.white, width: 4), boxShadow: const [BoxShadow(color: Color(0xFFF57F17), offset: Offset(0, 4))]), child: const Icon(Icons.replay_rounded, color: Colors.white, size: 36)),
+                                ),
+                                const SizedBox(width: 20),
+                                GestureDetector(
+                                  onTap: () => Navigator.of(context).pop(),
+                                  child: Container(width: 60, height: 60, decoration: BoxDecoration(color: const Color(0xFF4DD0E1), shape: BoxShape.circle, border: Border.all(color: Colors.white, width: 4), boxShadow: const [BoxShadow(color: Color(0xFF00838F), offset: Offset(0, 4))]), child: const Icon(Icons.home_rounded, color: Colors.white, size: 36)),
+                                ),
+                                const SizedBox(width: 20),
+                                GestureDetector(
+                                  onTap: () {
+                                    if (mounted) setState(() { leftPlaced = false; rightPlaced = false; _celebrationController.reset(); });
+                                  },
+                                  child: Container(width: 60, height: 60, decoration: BoxDecoration(color: const Color(0xFFFF7043), shape: BoxShape.circle, border: Border.all(color: Colors.white, width: 4), boxShadow: const [BoxShadow(color: Color(0xFFD84315), offset: Offset(0, 4))]), child: const Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 36)),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+
+            ],
+          ),
+        ),
       ),
     );
   }
