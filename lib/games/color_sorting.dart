@@ -213,7 +213,7 @@ class _ColorSortingGameState extends State<ColorSortingGame>
                             Stack(
                               children: [
                                 Text(
-                                  \'YOU WIN!\',
+                                  'YOU WIN!',
                                   style: TextStyle(
                                     fontSize: 56,
                                     fontWeight: FontWeight.w900,
@@ -224,7 +224,7 @@ class _ColorSortingGameState extends State<ColorSortingGame>
                                   ),
                                 ),
                                 const Text(
-                                  \'YOU WIN!\',
+                                  'YOU WIN!',
                                   style: TextStyle(
                                     fontSize: 56,
                                     fontWeight: FontWeight.w900,
