@@ -222,7 +222,7 @@ class _AnimalSoundRecognitionGameState extends State<AnimalSoundRecognitionGame>
                             Stack(
                               children: [
                                 Text(
-                                  \'YOU WIN!\',
+                                  'YOU WIN!',
                                   style: TextStyle(
                                     fontSize: 56,
                                     fontWeight: FontWeight.w900,
@@ -233,7 +233,7 @@ class _AnimalSoundRecognitionGameState extends State<AnimalSoundRecognitionGame>
                                   ),
                                 ),
                                 const Text(
-                                  \'YOU WIN!\',
+                                  'YOU WIN!',
                                   style: TextStyle(
                                     fontSize: 56,
                                     fontWeight: FontWeight.w900,
