@@ -168,11 +168,11 @@ class _ShapeMatchingGameState extends State<ShapeMatchingGame>
                     Stack(
                       children: [
                         Text(
-                          \'FIND THE SHAPE!\',
+                          'FIND THE SHAPE!',
                           style: TextStyle(
                             fontSize: 42,
                             fontWeight: FontWeight.w900,
-                            fontFamily: \'ComicSans\',
+                            fontFamily: 'ComicSans',
                             foreground: Paint()
                               ..style = PaintingStyle.stroke
                               ..strokeWidth = 8
@@ -180,11 +180,11 @@ class _ShapeMatchingGameState extends State<ShapeMatchingGame>
                           ),
                         ),
                         const Text(
-                          \'FIND THE SHAPE!\',
+                          'FIND THE SHAPE!',
                           style: TextStyle(
                             fontSize: 42,
                             fontWeight: FontWeight.w900,
-                            fontFamily: \'ComicSans\',
+                            fontFamily: 'ComicSans',
                             color: Colors.white,
                           ),
                         ),
@@ -258,7 +258,7 @@ class _ShapeMatchingGameState extends State<ShapeMatchingGame>
                             Stack(
                               children: [
                                 Text(
-                                  \'YOU WIN!\',
+                                  'YOU WIN!',
                                   style: TextStyle(
                                     fontSize: 56,
                                     fontWeight: FontWeight.w900,
@@ -269,7 +269,7 @@ class _ShapeMatchingGameState extends State<ShapeMatchingGame>
                                   ),
                                 ),
                                 const Text(
-                                  \'YOU WIN!\',
+                                  'YOU WIN!',
                                   style: TextStyle(
                                     fontSize: 56,
                                     fontWeight: FontWeight.w900,
