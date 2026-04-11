@@ -169,8 +169,8 @@ class _PuzzleGameState extends State<PuzzleGame> with TickerProviderStateMixin {
                           children: [
                             Stack(
                               children: [
-                                Text(\'YOU WIN!\', style: TextStyle(fontSize: 56, fontWeight: FontWeight.w900, foreground: Paint()..style = PaintingStyle.stroke..strokeWidth = 10..color = const Color(0xFFF57F17))),
-                                const Text(\'YOU WIN!\', style: TextStyle(fontSize: 56, fontWeight: FontWeight.w900, color: Color(0xFFFFCA28))),
+                                Text('YOU WIN!', style: TextStyle(fontSize: 56, fontWeight: FontWeight.w900, foreground: Paint()..style = PaintingStyle.stroke..strokeWidth = 10..color = const Color(0xFFF57F17))),
+                                const Text('YOU WIN!', style: TextStyle(fontSize: 56, fontWeight: FontWeight.w900, color: Color(0xFFFFCA28))),
                               ],
                             ),
                             const SizedBox(height: 20),
