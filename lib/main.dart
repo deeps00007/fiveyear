@@ -1,7 +1,16 @@
 ﻿import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'views/loading_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Force landscape orientation for kids' games
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.landscapeLeft,
+    DeviceOrientation.landscapeRight,
+  ]);
+
   runApp(const KidsGameApp());
 }
 
@@ -13,10 +22,7 @@ class KidsGameApp extends StatelessWidget {
     return MaterialApp(
       title: 'Kids Learning Games',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        fontFamily: 'ComicSans',
-      ),
+      theme: ThemeData(primarySwatch: Colors.blue, fontFamily: 'ComicSans'),
       home: const LoadingScreen(),
     );
   }
