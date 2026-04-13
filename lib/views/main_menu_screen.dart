@@ -2,6 +2,7 @@
 import 'package:flutter_svg/flutter_svg.dart';
 import '../models/game_info.dart';
 import '../viewmodels/main_menu_viewmodel.dart';
+import 'widgets/boy_character.dart';
 
 class MainMenuScreen extends StatefulWidget {
   const MainMenuScreen({super.key});
@@ -13,7 +14,7 @@ class MainMenuScreen extends StatefulWidget {
 class _MainMenuScreenState extends State<MainMenuScreen> {
   final MainMenuViewModel _viewModel = MainMenuViewModel();
   final ScrollController _scrollController = ScrollController();
-  
+
   double _scrollOffset = 0.0;
 
   @override
@@ -50,10 +51,10 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
             child: SvgPicture.asset(
               'assets/background.svg',
               // 10:3 aspect ratio will naturally be very wide compared to height
-              fit: BoxFit.cover, 
+              fit: BoxFit.cover,
             ),
           ),
-          
+
           // 2. Main Content Layer
           SafeArea(
             child: Row(
@@ -97,11 +98,7 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
                           ),
                         ),
                         const SizedBox(height: 20),
-                        const Icon(
-                          Icons.sentiment_very_satisfied,
-                          size: 140,
-                          color: Colors.orangeAccent,
-                        ),
+                        const BoyCharacter(),
                       ],
                     ),
                   ),
@@ -126,8 +123,8 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
                               Shadow(
                                 color: Colors.white.withValues(alpha: 0.8),
                                 blurRadius: 4,
-                              )
-                            ]
+                              ),
+                            ],
                           ),
                         ),
                         const SizedBox(height: 24),
@@ -141,7 +138,8 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
                                   crossAxisCount: 2,
                                   mainAxisSpacing: 20,
                                   crossAxisSpacing: 20,
-                                  childAspectRatio: 0.85, // Adjust size slightly for horizontal
+                                  childAspectRatio:
+                                      0.85, // Adjust size slightly for horizontal
                                 ),
                             itemCount: _viewModel.defaultGames.length,
                             itemBuilder: (context, index) {
