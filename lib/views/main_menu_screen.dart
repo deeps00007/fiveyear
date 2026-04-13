@@ -129,25 +129,21 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
                         ),
                         const SizedBox(height: 24),
                         Expanded(
-                          child: GridView.builder(
+                          child: ListView.separated(
                             controller: _scrollController,
-                            // Scroll horizontally
                             scrollDirection: Axis.horizontal,
-                            gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 2,
-                                  mainAxisSpacing: 20,
-                                  crossAxisSpacing: 20,
-                                  childAspectRatio:
-                                      0.85, // Adjust size slightly for horizontal
-                                ),
                             itemCount: _viewModel.defaultGames.length,
+                            separatorBuilder: (context, index) =>
+                                const SizedBox(width: 24),
                             itemBuilder: (context, index) {
                               final game = _viewModel.defaultGames[index];
-                              return GameSlab(
-                                gameInfo: game,
-                                onTap: () =>
-                                    _viewModel.onGameSelected(context, game),
+                              return SizedBox(
+                                width: 220, // fixed large width for kids
+                                child: GameSlab(
+                                  gameInfo: game,
+                                  onTap: () =>
+                                      _viewModel.onGameSelected(context, game),
+                                ),
                               );
                             },
                           ),

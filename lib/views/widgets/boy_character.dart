@@ -112,7 +112,7 @@ class _BoyCharacterState extends State<BoyCharacter> {
 
           // float: threshold
           _shader!.setFloat(5, 0.1);
-          
+
           // float: smoothing
           _shader!.setFloat(6, 0.2);
           // sampler: image
