@@ -1,14 +1,12 @@
-#version 460 core
-
-#include <flutter/flutter.glsl>
+#include <flutter/runtime_effect.glsl>
 
 out vec4 fragColor;
 
-uniform sampler2D image;
 uniform vec2 resolution;
 uniform vec3 keyColor;
 uniform float threshold;
 uniform float smoothing;
+uniform sampler2D image;
 
 void main() {
     vec2 uv = FlutterFragCoord().xy / resolution;
