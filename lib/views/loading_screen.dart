@@ -51,7 +51,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
             const Icon(Icons.child_care, size: 120, color: Colors.white),
             const SizedBox(height: 20),
             const Text(
-              'Let\\'s Play & Learn!',
+              "Let's Play & Learn!",
               style: TextStyle(
                 fontSize: 36,
                 fontWeight: FontWeight.bold,
@@ -64,14 +64,16 @@ class _LoadingScreenState extends State<LoadingScreen> {
               width: MediaQuery.of(context).size.width * 0.6,
               height: 40,
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.4),
+                color: Colors.white.withValues(alpha: 0.4),
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(color: Colors.white, width: 3),
               ),
               child: Stack(
                 children: [
                   Container(
-                    width: (MediaQuery.of(context).size.width * 0.6) * (_viewModel.progress / 100),
+                    width:
+                        (MediaQuery.of(context).size.width * 0.6) *
+                        (_viewModel.progress / 100),
                     height: 40,
                     decoration: BoxDecoration(
                       color: Colors.orangeAccent,
